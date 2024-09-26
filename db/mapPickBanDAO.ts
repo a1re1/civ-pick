@@ -1,3 +1,5 @@
+"use server";
+
 import { sql } from "@vercel/postgres";
 
 export interface MapPickBanResult {
@@ -11,10 +13,11 @@ export async function insertMapPickBanResult(
   selectedMaps: string[],
   bannedMap: string
 ): Promise<MapPickBanResult> {
+  "use server";
   try {
     const result = await sql`
       INSERT INTO map_pick_ban (selected_maps, banned_map)
-      VALUES (${JSON.stringify(selectedMaps)}, ${bannedMap})
+      VALUES (${selectedMaps as any}, ${bannedMap})
       RETURNING id, selected_maps, banned_map, created_at
     `;
     return {
@@ -30,8 +33,9 @@ export async function insertMapPickBanResult(
 }
 
 export async function getLatestMapPickBanResults(
-  limit: number = 5
+  limit: number = 10
 ): Promise<MapPickBanResult[]> {
+  "use server";
   try {
     const result = await sql`
       SELECT * FROM map_pick_ban
@@ -40,7 +44,7 @@ export async function getLatestMapPickBanResults(
     `;
     return result.rows.map((row) => ({
       id: row.id,
-      selected_maps: JSON.parse(row.selected_maps),
+      selected_maps: row.selected_maps,
       banned_map: row.banned_map,
       created_at: row.created_at,
     }));
