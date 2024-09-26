@@ -14,8 +14,15 @@ export function MapResultsChart({ selectedMaps, bannedMap }: { selectedMaps: str
       {
         label: "Votes",
         data: mapTypes.map(map => selectedMaps.includes(map) ? 1 : 0),
-        backgroundColor: mapTypes.map(map => map === bannedMap ? "rgba(255, 99, 132, 0.5)" : "rgba(75, 192, 192, 0.5)"),
-        borderColor: mapTypes.map(map => map === bannedMap ? "rgb(255, 99, 132)" : "rgb(75, 192, 192)"),
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgb(75, 192, 192)",
+        borderWidth: 1,
+      },
+      {
+        label: "Bans",
+        data: mapTypes.map(map => map === bannedMap ? 1 : 0),
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(255, 99, 132)",
         borderWidth: 1,
       },
     ],
