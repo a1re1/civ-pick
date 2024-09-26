@@ -1,19 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPickBanForm } from "@/components/map-pick-ban-form"
 import { MapResultsChart } from "@/components/map-results-chart"
 import { Civ6PickBanForm } from "@/components/civ6-pick-ban-form"
-import { storeMapPickBanResults } from "@/db/database"
+import { insertMapPickBanResult, getLatestMapPickBanResults, MapPickBanResult } from "@/db/mapPickBanDAO"
 
 export default function Page() {
-  const [mapResults, setMapResults] = useState<{ selectedMaps: string[], bannedMap: string } | null>(null)
+  const [mapResults, setMapResults] = useState<MapPickBanResult | null>(null)
+  const [latestResults, setLatestResults] = useState<MapPickBanResult[]>([])
+
+  useEffect(() => {
+    fetchLatestResults()
+  }, [])
+
+  const fetchLatestResults = async () => {
+    try {
+      const results = await getLatestMapPickBanResults()
+      setLatestResults(results)
+    } catch (error) {
+      console.error('Failed to fetch latest results:', error)
+    }
+  }
 
   const handleMapFormSubmit = async (data: { selectedMaps: string[], bannedMap: string }) => {
-    setMapResults(data)
     try {
-      await storeMapPickBanResults(data.selectedMaps, data.bannedMap)
+      const result = await insertMapPickBanResult(data.selectedMaps, data.bannedMap)
+      setMapResults(result)
       console.log('Map pick-ban results stored successfully')
+      fetchLatestResults()
     } catch (error) {
       console.error('Failed to store map pick-ban results:', error)
     }
@@ -27,7 +42,18 @@ export default function Page() {
         <>
           <div className="w-full max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-4">Map Voting Results</h2>
-            <MapResultsChart selectedMaps={mapResults.selectedMaps} bannedMap={mapResults.bannedMap} />
+            <MapResultsChart selectedMaps={mapResults.selected_maps} bannedMap={mapResults.banned_map} />
+          </div>
+          <div className="w-full max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">Latest Map Voting Results</h2>
+            {latestResults.map((result, index) => (
+              <div key={result.id} className="mb-4 p-4 border rounded">
+                <h3 className="text-lg font-semibold">Result {index + 1}</h3>
+                <p>Selected Maps: {result.selected_maps.join(', ')}</p>
+                <p>Banned Map: {result.banned_map}</p>
+                <p>Created At: {new Date(result.created_at).toLocaleString()}</p>
+              </div>
+            ))}
           </div>
           <Civ6PickBanForm />
         </>
