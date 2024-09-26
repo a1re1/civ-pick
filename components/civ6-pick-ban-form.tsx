@@ -53,6 +53,9 @@ export function Civ6PickBanForm({ onSubmit }: { onSubmit: (result: LeaderPickBan
     try {
       const result = await insertLeaderPickBanResult(selectedLeaders, bannedLeaders)
       onSubmit(result)
+      // Reset the form after successful submission
+      setSelectedLeaders([])
+      setBannedLeaders([])
     } catch (error) {
       console.error("Failed to store leader pick-ban results:", error)
       // You might want to show an error message to the user here
