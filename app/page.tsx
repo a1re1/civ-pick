@@ -4,12 +4,19 @@ import { useState } from "react"
 import { MapPickBanForm } from "@/components/map-pick-ban-form"
 import { MapResultsChart } from "@/components/map-results-chart"
 import { Civ6PickBanForm } from "@/components/civ6-pick-ban-form"
+import { storeMapPickBanResults } from "@/db/database"
 
 export default function Page() {
   const [mapResults, setMapResults] = useState<{ selectedMaps: string[], bannedMap: string } | null>(null)
 
-  const handleMapFormSubmit = (data: { selectedMaps: string[], bannedMap: string }) => {
+  const handleMapFormSubmit = async (data: { selectedMaps: string[], bannedMap: string }) => {
     setMapResults(data)
+    try {
+      await storeMapPickBanResults(data.selectedMaps, data.bannedMap)
+      console.log('Map pick-ban results stored successfully')
+    } catch (error) {
+      console.error('Failed to store map pick-ban results:', error)
+    }
   }
 
   return (
