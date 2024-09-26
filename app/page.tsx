@@ -10,7 +10,6 @@ import {
 } from "@/db/mapPickBanDAO";
 
 export default function Page() {
-  const [mapResults, setMapResults] = useState<MapPickBanResult | null>(null);
   const [latestResults, setLatestResults] = useState<MapPickBanResult[]>([]);
 
   useEffect(() => {
@@ -26,8 +25,7 @@ export default function Page() {
     }
   };
 
-  const handleMapFormSubmit = (result: MapPickBanResult) => {
-    setMapResults(result);
+  const handleMapFormSubmit = () => {
     console.log("Map pick-ban results stored successfully");
     fetchLatestResults();
   };
