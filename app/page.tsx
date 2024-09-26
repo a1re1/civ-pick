@@ -34,24 +34,23 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      {!mapResults ? (
-        <MapPickBanForm onSubmit={handleMapFormSubmit} />
-      ) : (
+      <MapPickBanForm onSubmit={handleMapFormSubmit} />
+      {latestResults.length > 0 && (
         <>
           <div className="w-full max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Map Voting Results</h2>
+            <h2 className="text-2xl font-bold mb-4">Latest Map Voting Results</h2>
             <MapResultsChart
-              selectedMaps={mapResults.selected_maps}
-              bannedMap={mapResults.banned_map}
+              selectedMaps={latestResults[0].selected_maps}
+              bannedMap={latestResults[0].banned_map}
             />
           </div>
           <div className="w-full max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-4">
-              Latest Map Voting Results
+              Previous Map Voting Results
             </h2>
-            {latestResults.map((result, index) => (
+            {latestResults.slice(1).map((result, index) => (
               <div key={result.id} className="mb-4 p-4 border rounded">
-                <h3 className="text-lg font-semibold">Result {index + 1}</h3>
+                <h3 className="text-lg font-semibold">Result {index + 2}</h3>
                 <p>Selected Maps: {result.selected_maps.join(", ")}</p>
                 <p>Banned Map: {result.banned_map}</p>
                 <p>
