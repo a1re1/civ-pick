@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Checkbox } from "@/components/ui/checkbox"
+import { insertLeaderPickBanResult, LeaderPickBanResult } from "@/db/leaderPickBanDAO"
 
 const leaders = [
   "Alexander", "Amanitore", "Ambiorix", "Catherine de Medici", "Cleopatra", "Cyrus", 
@@ -18,9 +19,10 @@ const leaders = [
   "Tamar", "Teddy Roosevelt", "Tomyris", "Trajan", "Victoria", "Wilfrid Laurier"
 ]
 
-export function Civ6PickBanForm() {
+export function Civ6PickBanForm({ onSubmit }: { onSubmit: (result: LeaderPickBanResult) => void }) {
   const [selectedLeaders, setSelectedLeaders] = useState<string[]>([])
   const [bannedLeaders, setBannedLeaders] = useState<string[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleLeaderToggle = (leader: string, type: "pick" | "ban") => {
     if (type === "pick") {
@@ -46,10 +48,17 @@ export function Civ6PickBanForm() {
     }
   }
 
-  const handleSubmit = () => {
-    console.log("Submitted:", { selectedLeaders, bannedLeaders })
-    // Here you would typically send this data to a server
-    alert("Form submitted! Check console for details.")
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    try {
+      const result = await insertLeaderPickBanResult(selectedLeaders, bannedLeaders)
+      onSubmit(result)
+    } catch (error) {
+      console.error("Failed to store leader pick-ban results:", error)
+      // You might want to show an error message to the user here
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -106,9 +115,9 @@ export function Civ6PickBanForm() {
       <CardFooter>
         <Button 
           onClick={handleSubmit} 
-          disabled={selectedLeaders.length === 0 || bannedLeaders.length === 0}
+          disabled={selectedLeaders.length === 0 || bannedLeaders.length === 0 || isSubmitting}
         >
-          Submit
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </CardFooter>
     </Card>
