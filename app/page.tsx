@@ -23,15 +23,10 @@ export default function Page() {
     }
   }
 
-  const handleMapFormSubmit = async (data: { selectedMaps: string[], bannedMap: string }) => {
-    try {
-      const result = await insertMapPickBanResult(data.selectedMaps, data.bannedMap)
-      setMapResults(result)
-      console.log('Map pick-ban results stored successfully')
-      fetchLatestResults()
-    } catch (error) {
-      console.error('Failed to store map pick-ban results:', error)
-    }
+  const handleMapFormSubmit = (result: MapPickBanResult) => {
+    setMapResults(result)
+    console.log('Map pick-ban results stored successfully')
+    fetchLatestResults()
   }
 
   return (

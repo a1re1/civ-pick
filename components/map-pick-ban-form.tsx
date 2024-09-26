@@ -6,12 +6,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { insertMapPickBanResult, MapPickBanResult } from "@/db/mapPickBanDAO"
 
 const mapTypes = ["Pangaea", "Continents", "Islands", "Fractal", "Inland Sea", "Terra"]
 
-export function MapPickBanForm({ onSubmit }: { onSubmit: (data: { selectedMaps: string[], bannedMap: string }) => void }) {
+export function MapPickBanForm({ onSubmit }: { onSubmit: (result: MapPickBanResult) => void }) {
   const [selectedMaps, setSelectedMaps] = useState<string[]>([])
   const [bannedMap, setBannedMap] = useState<string>("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleMapToggle = (map: string) => {
     setSelectedMaps(prev => {
@@ -24,8 +26,17 @@ export function MapPickBanForm({ onSubmit }: { onSubmit: (data: { selectedMaps: 
     })
   }
 
-  const handleSubmit = () => {
-    onSubmit({ selectedMaps, bannedMap })
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    try {
+      const result = await insertMapPickBanResult(selectedMaps, bannedMap)
+      onSubmit(result)
+    } catch (error) {
+      console.error('Failed to store map pick-ban results:', error)
+      // You might want to show an error message to the user here
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
