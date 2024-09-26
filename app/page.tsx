@@ -38,11 +38,8 @@ export default function Page() {
       {latestResults.length > 0 && (
         <>
           <div className="w-full max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Latest Map Voting Results</h2>
-            <MapResultsChart
-              selectedMaps={latestResults[0].selected_maps}
-              bannedMap={latestResults[0].banned_map}
-            />
+            <h2 className="text-2xl font-bold mb-4">Map Voting Results</h2>
+            <MapResultsChart results={latestResults} />
           </div>
           <div className="w-full max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-4">
